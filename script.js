@@ -11,6 +11,7 @@ class FuelTracker {
         this.form.addEventListener('submit', (e) => this.handleSubmit(e));
         document.getElementById('date').valueAsDate = new Date();
         this.displayRecords();
+        this.initBackupControls();
     }
     
     handleSubmit(e) {
@@ -129,6 +130,74 @@ class FuelTracker {
         
         const total = validRecords.reduce((sum, record) => sum + record.fuelEfficiency, 0);
         return Math.round((total / validRecords.length) * 100) / 100;
+    }
+    
+    initBackupControls() {
+        const exportBtn = document.getElementById('export-btn');
+        const importBtn = document.getElementById('import-btn');
+        const importFile = document.getElementById('import-file');
+        
+        exportBtn.addEventListener('click', () => this.exportData());
+        importBtn.addEventListener('click', () => importFile.click());
+        importFile.addEventListener('change', (e) => this.importData(e));
+    }
+    
+    exportData() {
+        if (this.records.length === 0) {
+            alert('エクスポートする記録がありません');
+            return;
+        }
+        
+        const data = {
+            exportDate: new Date().toISOString(),
+            version: '1.0',
+            records: this.records
+        };
+        
+        const jsonString = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `fuel-records-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        alert('データをエクスポートしました');
+    }
+    
+    importData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                
+                if (!data.records || !Array.isArray(data.records)) {
+                    throw new Error('無効なファイル形式です');
+                }
+                
+                const confirmMessage = `${data.records.length}件の記録をインポートします。\n現在の記録は上書きされます。\n続行しますか？`;
+                if (!confirm(confirmMessage)) return;
+                
+                this.records = data.records;
+                this.saveRecords();
+                this.displayRecords();
+                
+                alert(`${data.records.length}件の記録をインポートしました`);
+                
+            } catch (error) {
+                alert('ファイルの読み込みに失敗しました: ' + error.message);
+            }
+        };
+        
+        reader.readAsText(file);
+        event.target.value = '';
     }
 }
 

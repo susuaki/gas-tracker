@@ -82,6 +82,39 @@ button:hover {
     background-color: #2980b9;
 }
 
+.backup-section {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.backup-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+#export-btn {
+    background-color: #27ae60;
+    color: white;
+}
+
+#export-btn:hover {
+    background-color: #219a52;
+}
+
+#import-btn {
+    background-color: #f39c12;
+    color: white;
+}
+
+#import-btn:hover {
+    background-color: #e67e22;
+}
+
 .records-section {
     background: white;
     padding: 30px;
@@ -187,8 +220,14 @@ button:hover {
     }
     
     .form-section,
+    .backup-section,
     .records-section {
         padding: 20px;
+    }
+    
+    .backup-controls {
+        flex-direction: column;
+        align-items: center;
     }
     
     .record-details {
