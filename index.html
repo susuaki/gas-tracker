@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ガソリン燃費記録</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>ガソリン燃費記録</h1>
+        
+        <div class="form-section">
+            <h2>給油記録を追加</h2>
+            <form id="fuel-form">
+                <div class="form-group">
+                    <label for="date">日付:</label>
+                    <input type="date" id="date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="odometer">走行距離 (km):</label>
+                    <input type="number" id="odometer" step="0.1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fuel-amount">給油量 (L):</label>
+                    <input type="number" id="fuel-amount" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="price">金額 (円):</label>
+                    <input type="number" id="price" required>
+                </div>
+                
+                <button type="submit">記録を追加</button>
+            </form>
+        </div>
+        
+        <div class="records-section">
+            <h2>給油記録一覧</h2>
+            <div id="records-list"></div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
