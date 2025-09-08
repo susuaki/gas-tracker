@@ -175,6 +175,7 @@ button:hover {
 #export-btn {
     background-color: #27ae60;
     color: white;
+    width: 280px !important;
 }
 
 #export-btn:hover {
