@@ -326,8 +326,12 @@ button:hover {
         align-items: center;
     }
     
-    .backup-controls button {
+    .backup-controls button,
+    #export-btn,
+    #import-btn {
         width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
     }
     
     .record-details {
