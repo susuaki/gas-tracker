@@ -110,13 +110,20 @@ button:hover {
 }
 
 .stat-item {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     padding: 25px;
     border-radius: 10px;
     text-align: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
+}
+
+.stat-item:nth-child(1) {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+}
+
+.stat-item:nth-child(2) {
+    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
 }
 
 .stat-item:hover {
