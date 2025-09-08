@@ -166,6 +166,10 @@ button:hover {
     flex-wrap: wrap;
 }
 
+.backup-controls button {
+    min-width: 200px;
+}
+
 #export-btn {
     background-color: #27ae60;
     color: white;
