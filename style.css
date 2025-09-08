@@ -51,6 +51,18 @@ label {
     color: #555;
 }
 
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
 input[type="date"],
 input[type="number"] {
     width: 100%;
@@ -149,6 +161,25 @@ button:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
+}
+
+.tank-type {
+    font-size: 0.8em;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+.tank-type.full-tank {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.tank-type.partial {
+    background-color: rgba(241, 196, 15, 0.9);
+    color: #2c3e50;
+    border: 1px solid #f39c12;
 }
 
 .record-date {
