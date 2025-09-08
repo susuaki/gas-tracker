@@ -326,6 +326,10 @@ button:hover {
         align-items: center;
     }
     
+    .backup-controls button {
+        width: 280px !important;
+    }
+    
     .record-details {
         grid-template-columns: 1fr;
     }
