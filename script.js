@@ -90,6 +90,7 @@ class FuelTracker {
     displayRecords() {
         if (this.records.length === 0) {
             this.recordsList.innerHTML = '<p class="no-records">記録がありません</p>';
+            this.updateStats();
             return;
         }
         
@@ -99,6 +100,7 @@ class FuelTracker {
             .join('');
         
         this.recordsList.innerHTML = recordsHtml;
+        this.updateStats();
     }
     
     createRecordHtml(record) {
@@ -158,6 +160,25 @@ class FuelTracker {
         
         const total = validRecords.reduce((sum, record) => sum + record.fuelEfficiency, 0);
         return Math.round((total / validRecords.length) * 100) / 100;
+    }
+    
+    getBestFuelEfficiency() {
+        const validRecords = this.records.filter(record => record.fuelEfficiency !== null);
+        if (validRecords.length === 0) return 0;
+        
+        const best = Math.max(...validRecords.map(record => record.fuelEfficiency));
+        return Math.round(best * 100) / 100;
+    }
+    
+    updateStats() {
+        const averageElement = document.getElementById('average-efficiency');
+        const bestElement = document.getElementById('best-efficiency');
+        
+        const average = this.getAverageFuelEfficiency();
+        const best = this.getBestFuelEfficiency();
+        
+        averageElement.textContent = average > 0 ? average.toFixed(2) : '--';
+        bestElement.textContent = best > 0 ? best.toFixed(2) : '--';
     }
     
     initBackupControls() {
