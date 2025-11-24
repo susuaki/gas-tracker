@@ -1,6 +1,10 @@
 class FuelTracker {
     constructor() {
         this.records = this.loadRecords();
+        this.recalculateFuelEfficiencies();
+        if (this.records.length > 0) {
+            this.saveRecords();
+        }
         this.form = document.getElementById('fuel-form');
         this.recordsList = document.getElementById('records-list');
         
@@ -31,7 +35,7 @@ class FuelTracker {
             price,
             isFullTank,
             pricePerLiter: Math.round(price / fuelAmount),
-            fuelEfficiency: this.calculateFuelEfficiency(odometer, fuelAmount, isFullTank)
+            fuelEfficiency: null
         };
         
         this.addRecord(record);
@@ -40,49 +44,55 @@ class FuelTracker {
         document.getElementById('is-full-tank').checked = true;
     }
     
-    calculateFuelEfficiency(currentOdometer, fuelAmount, isFullTank) {
-        if (!isFullTank || this.records.length === 0) {
-            return null;
+    recalculateFuelEfficiencies() {
+        if (this.records.length === 0) {
+            return;
         }
-        
-        // 最後の満タン給油を見つける
-        let lastFullTankIndex = -1;
-        for (let i = this.records.length - 1; i >= 0; i--) {
-            if (this.records[i].isFullTank) {
-                lastFullTankIndex = i;
-                break;
+
+        const sortedRecords = [...this.records].sort((a, b) => {
+            const dateDifference = new Date(a.date) - new Date(b.date);
+            if (dateDifference !== 0) {
+                return dateDifference;
             }
-        }
-        
-        if (lastFullTankIndex === -1) {
-            return null;
-        }
-        
-        const lastFullTankRecord = this.records[lastFullTankIndex];
-        const distance = currentOdometer - lastFullTankRecord.odometer;
-        
-        if (distance <= 0) {
-            return null;
-        }
-        
-        // 最後の満タン給油以降の給油量の合計を計算
-        let totalFuelUsed = 0;
-        for (let i = lastFullTankIndex + 1; i < this.records.length; i++) {
-            totalFuelUsed += this.records[i].fuelAmount;
-        }
-        totalFuelUsed += fuelAmount; // 今回の給油量も追加
-        
-        return Math.round((distance / totalFuelUsed) * 100) / 100;
+            return (a.id || 0) - (b.id || 0);
+        });
+
+        let lastFullRecord = null;
+        let fuelSinceLastFull = 0;
+
+        sortedRecords.forEach(record => {
+            const isFullTank = record.isFullTank !== false;
+            if (isFullTank) {
+                if (lastFullRecord) {
+                    const distance = record.odometer - lastFullRecord.odometer;
+                    const totalFuelUsed = fuelSinceLastFull + record.fuelAmount;
+
+                    record.fuelEfficiency = (distance > 0 && totalFuelUsed > 0)
+                        ? Math.round((distance / totalFuelUsed) * 100) / 100
+                        : null;
+                } else {
+                    record.fuelEfficiency = null;
+                }
+
+                lastFullRecord = record;
+                fuelSinceLastFull = 0;
+            } else {
+                record.fuelEfficiency = null;
+                fuelSinceLastFull += record.fuelAmount;
+            }
+        });
     }
-    
+
     addRecord(record) {
         this.records.push(record);
+        this.recalculateFuelEfficiencies();
         this.saveRecords();
         this.displayRecords();
     }
     
     deleteRecord(id) {
         this.records = this.records.filter(record => record.id !== id);
+        this.recalculateFuelEfficiencies();
         this.saveRecords();
         this.displayRecords();
     }
@@ -235,6 +245,7 @@ class FuelTracker {
                 if (!confirm(confirmMessage)) return;
                 
                 this.records = data.records;
+                this.recalculateFuelEfficiencies();
                 this.saveRecords();
                 this.displayRecords();
                 
