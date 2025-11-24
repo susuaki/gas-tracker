@@ -22,11 +22,23 @@ class FuelTracker {
         e.preventDefault();
         
         const date = document.getElementById('date').value;
-        const odometer = parseFloat(document.getElementById('odometer').value);
+        const odometerInput = document.getElementById('odometer');
+        const odometerValue = odometerInput.value.trim();
+        const odometer = odometerValue === '' ? null : parseFloat(odometerValue);
         const fuelAmount = parseFloat(document.getElementById('fuel-amount').value);
         const price = parseInt(document.getElementById('price').value);
         const isFullTank = document.getElementById('is-full-tank').checked;
         
+        if (odometerValue !== '' && Number.isNaN(odometer)) {
+            alert('走行距離の値が正しくありません');
+            return;
+        }
+
+        if (isFullTank && (odometer === null || Number.isNaN(odometer))) {
+            alert('満タン給油のときは走行距離を入力してください。');
+            return;
+        }
+
         const record = {
             id: Date.now(),
             date,
@@ -63,13 +75,19 @@ class FuelTracker {
         sortedRecords.forEach(record => {
             const isFullTank = record.isFullTank !== false;
             if (isFullTank) {
-                if (lastFullRecord) {
+                const hasDistanceData = lastFullRecord &&
+                    typeof lastFullRecord.odometer === 'number' &&
+                    typeof record.odometer === 'number';
+
+                if (hasDistanceData) {
                     const distance = record.odometer - lastFullRecord.odometer;
                     const totalFuelUsed = fuelSinceLastFull + record.fuelAmount;
 
                     lastFullRecord.fuelEfficiency = (distance > 0 && totalFuelUsed > 0)
                         ? Math.round((distance / totalFuelUsed) * 100) / 100
                         : null;
+                } else if (lastFullRecord) {
+                    lastFullRecord.fuelEfficiency = null;
                 }
 
                 record.fuelEfficiency = null;
@@ -121,6 +139,10 @@ class FuelTracker {
             ? (record.isFullTank ? '満タン' : '部分給油')
             : '満タン'; // 既存データの互換性のため
         
+        const odometerText = typeof record.odometer === 'number'
+            ? `${record.odometer.toFixed(1)} km`
+            : '--';
+        
         return `
             <div class="record-item">
                 <div class="record-header">
@@ -131,7 +153,7 @@ class FuelTracker {
                 <div class="record-details">
                     <div class="record-detail">
                         <span class="label">走行距離:</span>
-                        <span class="value">${record.odometer.toFixed(1)} km</span>
+                        <span class="value">${odometerText}</span>
                     </div>
                     <div class="record-detail">
                         <span class="label">給油量:</span>
