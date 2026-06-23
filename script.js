@@ -83,14 +83,13 @@ class FuelTracker {
                     const distance = record.odometer - lastFullRecord.odometer;
                     const totalFuelUsed = fuelSinceLastFull + record.fuelAmount;
 
-                    lastFullRecord.fuelEfficiency = (distance > 0 && totalFuelUsed > 0)
+                    record.fuelEfficiency = (distance > 0 && totalFuelUsed > 0)
                         ? Math.round((distance / totalFuelUsed) * 100) / 100
                         : null;
-                } else if (lastFullRecord) {
-                    lastFullRecord.fuelEfficiency = null;
+                } else {
+                    record.fuelEfficiency = null;
                 }
 
-                record.fuelEfficiency = null;
                 lastFullRecord = record;
                 fuelSinceLastFull = 0;
             } else {
